@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pétalas de Rosa</title>
+  <style>
+    body { margin: 0; overflow: hidden; cursor: default; }
+    canvas { position: absolute; top: 0; left: 0; z-index: 1; }
+    .overlay {
+      position: absolute; top: 0; left: 0;
+      width: 100vw; height: 100vh;
+      display: flex; align-items: center; justify-content: center;
+      z-index: 2; pointer-events: none;
+    }
+    .message {
+      font-family: Georgia, 'Times New Roman', serif;
+      color: #ffe0ec;
+      font-size: 2.6rem;
+      text-align: center;
+      text-shadow: 0 2px 20px rgba(180,0,60,0.9), 0 0 50px rgba(255,80,130,0.5);
+      letter-spacing: 0.04em;
+      line-height: 1.4;
+    }
+  </style>
+</head>
+<body>
+  <canvas id="canvas"></canvas>
+  <div class="overlay">
+    <div class="message">Para sempre com você 🌹</div>
+  </div>
+
+  <script>
+    const canvas = document.getElementById('canvas');
+    const ctx    = canvas.getContext('2d');
+    canvas.width  = window.innerWidth;
+    canvas.height = window.innerHeight;
+
+    const petalColor = '#e91e8c';
+    const bgColor    = '#1a0010';
+    const petalCount = 60;
+
+    function hexToRgb(hex) {
+      return [parseInt(hex.slice(1,3),16), parseInt(hex.slice(3,5),16), parseInt(hex.slice(5,7),16)];
+    }
+    const [pr, pg, pb] = hexToRgb(petalColor);
+    const [br, bg, bb] = hexToRgb(bgColor);
+
+    /* ── BACKGROUND ── */
+    function drawBg() {
+      const grd = ctx.createRadialGradient(
+        canvas.width / 2, canvas.height / 2, 0,
+        canvas.width / 2, canvas.height / 2, canvas.width * 0.85
+      );
+      grd.addColorStop(0, `rgba(${Math.min(pr+55,255)},${Math.min(pg+25,255)},${Math.min(pb+55,255)},0.18)`);
+      grd.addColorStop(1, `rgb(${br},${bg},${bb})`);
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
+
+    /* ── PETAL ── */
+    class Petal {
+      constructor(initial = false) { this.reset(initial); }
+
+      reset(initial = false) {
+        this.x    = Math.random() * canvas.width;
+        this.y    = initial ? Math.random() * canvas.height : -25;
+        this.w    = Math.random() * 13 + 7;
+        this.h    = this.w * (Math.random() * 0.45 + 0.55);
+        this.vy   = Math.random() * 1.4 + 0.55;
+        this.vx   = (Math.random() - 0.5) * 1.1;
+        this.rot  = Math.random() * Math.PI * 2;
+        this.rotV = (Math.random() - 0.5) * 0.038;
+        this.alpha = Math.random() * 0.3 + 0.65;
+        this.swayT = Math.random() * Math.PI * 2;
+      }
+
+      update() {
+        this.swayT += 0.017;
+        this.x += this.vx + Math.sin(this.swayT) * 0.75;
+        this.y += this.vy;
+        this.rot += this.rotV;
+        if (this.y > canvas.height + 30) this.reset();
+      }
+
+      draw() {
+        ctx.save();
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rot);
+        ctx.globalAlpha = this.alpha;
+
+        const light = `rgba(${Math.min(pr+90,255)},${Math.min(pg+80,255)},${Math.min(pb+80,255)},1)`;
+        const mid   = `rgba(${pr},${pg},${pb},0.9)`;
+        const dark  = `rgba(${Math.max(pr-45,0)},${Math.max(pg-35,0)},${Math.max(pb-25,0)},0.75)`;
+
+        const grd = ctx.createRadialGradient(0, -this.h * 0.2, 0, 0, 0, Math.max(this.w, this.h));
+        grd.addColorStop(0, light);
+        grd.addColorStop(0.55, mid);
+        grd.addColorStop(1, dark);
+
+        ctx.beginPath();
+        ctx.moveTo(0, -this.h);
+        ctx.bezierCurveTo( this.w, -this.h * 0.8,  this.w,  this.h * 0.55, 0,  this.h);
+        ctx.bezierCurveTo(-this.w,  this.h * 0.55, -this.w, -this.h * 0.8, 0, -this.h);
+        ctx.fillStyle = grd;
+        ctx.fill();
+        ctx.restore();
+      }
+    }
+
+    const petals = Array.from({ length: petalCount }, () => new Petal(true));
+
+    /* ── ANIMATE ── */
+    function animate() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      drawBg();
+      petals.forEach(p => { p.update(); p.draw(); });
+      requestAnimationFrame(animate);
+    }
+
+    animate();
+
+    window.addEventListener('resize', () => {
+      canvas.width  = window.innerWidth;
+      canvas.height = window.innerHeight;
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,975 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Love Theme Studio 💖</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0d0b1a;
+      --surface: #1a1630;
+      --surface2: #231d40;
+      --accent: #e91e8c;
+      --accent2: #9c27b0;
+      --accent-soft: rgba(233, 30, 140, 0.12);
+      --text: #f0e6ff;
+      --muted: #8b7aa8;
+      --border: rgba(233, 30, 140, 0.2);
+      --radius: 12px;
+    }
+
+    body {
+      background: var(--bg);
+      background-image: radial-gradient(ellipse at top, #1a0a2e 0%, #0d0b1a 70%);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* ── HEADER ── */
+    header {
+      text-align: center;
+      padding: 0.75rem 1rem;
+      border-bottom: 1px solid var(--border);
+      background: linear-gradient(to bottom, rgba(233,30,140,0.07), transparent);
+      flex-shrink: 0;
+    }
+    .logo {
+      font-size: 1.5rem;
+      font-weight: 700;
+      background: linear-gradient(135deg, #ff69b4, #e91e8c, #9c27b0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    header p { color: var(--muted); font-size: 0.78rem; margin-top: 0.15rem; }
+
+    /* ── FOOTER ── */
+    footer {
+      text-align: center;
+      padding: 0.45rem 1rem;
+      border-top: 1px solid var(--border);
+      font-size: 0.7rem;
+      color: var(--muted);
+      flex-shrink: 0;
+    }
+    footer a {
+      color: var(--muted);
+      text-decoration: none;
+      transition: color 0.2s;
+    }
+    footer a:hover { color: var(--accent); }
+
+    /* ── LAYOUT ── */
+    .container {
+      display: grid;
+      grid-template-columns: 345px 1fr;
+      gap: 1rem;
+      padding: 1rem;
+      flex: 1;
+      overflow: hidden;
+    }
+
+    /* ── LEFT PANEL ── */
+    .left-panel {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+    .left-panel::-webkit-scrollbar { width: 3px; }
+    .left-panel::-webkit-scrollbar-track { background: transparent; }
+    .left-panel::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 2px; }
+
+    .panel-section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1rem;
+    }
+    .section-title {
+      font-size: 0.67rem;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      font-weight: 600;
+      margin-bottom: 0.75rem;
+    }
+
+    /* ── THEME CARDS ── */
+    .theme-cards { display: flex; flex-direction: column; gap: 0.5rem; }
+    .theme-card {
+      display: flex;
+      align-items: center;
+      gap: 0.85rem;
+      padding: 0.6rem 0.75rem;
+      border-radius: 8px;
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--surface2);
+      user-select: none;
+    }
+    .theme-card:hover { border-color: rgba(233,30,140,0.4); }
+    .theme-card.active {
+      border-color: var(--accent);
+      background: var(--accent-soft);
+      box-shadow: 0 0 0 1px var(--accent);
+    }
+    .card-thumb {
+      width: 54px; height: 40px;
+      border-radius: 5px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 8px; text-align: center;
+      font-family: monospace; font-weight: bold;
+      overflow: hidden; flex-shrink: 0;
+      line-height: 1.4; word-break: break-all;
+    }
+    .thumb-1 { background: #000; color: #ff69b4; }
+    .thumb-2 { background: linear-gradient(135deg, #ffb6c1, #ff69b4); color: #8b0045; }
+    .thumb-3 { background: #000; color: #ffd700; }
+    .thumb-4 { background: #00000a; color: #c8b4ff; font-size: 13px; letter-spacing: -0.5px; }
+    .thumb-5 { background: linear-gradient(135deg, #1a0010, #3d0020); color: #ffe0ec; }
+    .card-info h3 { font-size: 0.82rem; font-weight: 600; }
+    .card-info p { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+
+    /* ── FIELDS ── */
+    .theme-fields { display: flex; flex-direction: column; gap: 0.65rem; }
+    .theme-fields.hidden { display: none; }
+    .field-group { display: flex; flex-direction: column; gap: 0.22rem; }
+    .field-label {
+      font-size: 0.72rem; color: var(--muted); font-weight: 500;
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .field-count { font-size: 0.68rem; color: var(--accent); }
+
+    input[type="text"], textarea {
+      width: 100%;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      color: var(--text);
+      border-radius: 7px;
+      padding: 0.46rem 0.65rem;
+      font-size: 0.82rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+      resize: vertical;
+    }
+    input[type="text"]:focus, textarea:focus { border-color: var(--accent); }
+    textarea { min-height: 95px; line-height: 1.55; }
+
+    /* Color */
+    .color-row { display: flex; align-items: center; gap: 0.55rem; }
+    input[type="color"] {
+      width: 36px; height: 32px;
+      border: 1px solid var(--border);
+      background: var(--surface2);
+      border-radius: 7px; padding: 2px;
+      cursor: pointer; flex-shrink: 0;
+    }
+    .color-hex { font-size: 0.76rem; color: var(--muted); font-family: monospace; }
+
+    /* Toggle */
+    .toggle-row { display: flex; align-items: center; gap: 0.5rem; }
+    .toggle { position: relative; width: 34px; height: 19px; flex-shrink: 0; }
+    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute; inset: 0;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 20px; cursor: pointer; transition: 0.2s;
+    }
+    .toggle-slider::before {
+      content: ''; position: absolute;
+      width: 13px; height: 13px; left: 2px; top: 2px;
+      background: var(--muted); border-radius: 50%; transition: 0.2s;
+    }
+    .toggle input:checked + .toggle-slider { background: var(--accent-soft); border-color: var(--accent); }
+    .toggle input:checked + .toggle-slider::before { transform: translateX(15px); background: var(--accent); }
+    .toggle-label { font-size: 0.74rem; color: var(--muted); }
+
+    /* Range */
+    .range-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
+    .range-value { font-size: 0.7rem; color: var(--accent); font-family: monospace; }
+    input[type="range"] { width: 100%; accent-color: var(--accent); height: 4px; cursor: pointer; }
+    .range-labels { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--muted); margin-top: 0.2rem; }
+
+    .hint { font-size: 0.67rem; color: var(--muted); font-style: italic; }
+
+    /* ── ACTIONS ── */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.5rem;
+      margin-top: 0.9rem;
+    }
+    button {
+      padding: 0.5rem 0.7rem;
+      border: none; border-radius: 8px;
+      font-size: 0.77rem; font-weight: 600;
+      cursor: pointer; transition: all 0.2s;
+      font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+    }
+    .btn-preview {
+      grid-column: 1 / -1;
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-preview:hover { border-color: var(--accent); color: var(--accent); }
+    .btn-download {
+      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white;
+    }
+    .btn-download:hover { opacity: 0.88; transform: translateY(-1px); }
+    .btn-share {
+      background: var(--surface2); color: var(--text);
+      border: 1px solid var(--border);
+    }
+    .btn-share:hover { border-color: var(--accent2); color: #ce93d8; }
+    .btn-reset {
+      grid-column: 1 / -1;
+      background: transparent; color: var(--muted);
+      border: 1px solid transparent; font-size: 0.7rem; padding: 0.3rem;
+    }
+    .btn-reset:hover { color: var(--text); border-color: var(--border); }
+
+    /* ── RIGHT PANEL ── */
+    .right-panel {
+      display: flex; flex-direction: column;
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      overflow: hidden; background: #000;
+    }
+    .preview-bar {
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0.52rem 0.9rem;
+      background: var(--surface);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .preview-bar-left { display: flex; align-items: center; gap: 0.5rem; }
+    .dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--accent);
+      animation: blink 2s ease-in-out infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+    .preview-bar span { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .preview-bar-right { display: flex; align-items: center; gap: 0.4rem; }
+
+    /* Device toggle */
+    .device-btns {
+      display: flex; gap: 2px;
+      background: var(--surface2);
+      border: 1px solid var(--border);
+      border-radius: 6px; padding: 2px;
+    }
+    .device-btn {
+      padding: 0.25rem 0.5rem; font-size: 0.68rem;
+      background: transparent; color: var(--muted);
+      border: none; border-radius: 4px; cursor: pointer;
+      transition: all 0.15s; font-family: inherit;
+    }
+    .device-btn.active { background: var(--accent); color: white; }
+    .device-btn:not(.active):hover { color: var(--text); }
+
+    .btn-newtab {
+      padding: 0.28rem 0.6rem; font-size: 0.68rem;
+      background: var(--surface2); color: var(--muted);
+      border: 1px solid var(--border); border-radius: 6px;
+    }
+    .btn-newtab:hover { color: var(--text); border-color: var(--accent); }
+
+    /* Preview wrapper */
+    .preview-wrapper {
+      flex: 1; position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+      background: #111;
+    }
+
+    /* Loading */
+    .loading-overlay {
+      position: absolute; inset: 0;
+      background: rgba(13,11,26,0.82);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 10; transition: opacity 0.3s;
+    }
+    .loading-overlay.hidden { opacity: 0; pointer-events: none; }
+    .spinner {
+      width: 30px; height: 30px;
+      border: 3px solid rgba(233,30,140,0.2);
+      border-top-color: var(--accent);
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #preview-frame { border: none; transition: all 0.3s; }
+    #preview-frame.desktop { width: 100%; height: 100%; }
+    #preview-frame.mobile {
+      width: 390px; height: 844px; max-height: 100%;
+      border-radius: 14px;
+      box-shadow: 0 0 0 8px #222, 0 0 0 9px #444;
+    }
+
+    /* ── TOAST ── */
+    .toast {
+      position: fixed; bottom: 1.4rem; left: 50%;
+      transform: translateX(-50%) translateY(0);
+      background: var(--surface); color: var(--text);
+      padding: 0.52rem 1.3rem;
+      border-radius: 50px; border: 1px solid var(--accent);
+      font-size: 0.82rem;
+      box-shadow: 0 4px 24px rgba(0,0,0,0.5);
+      z-index: 1000; transition: opacity 0.3s, transform 0.3s;
+      white-space: nowrap;
+    }
+    .toast.hidden { opacity: 0; transform: translateX(-50%) translateY(10px); pointer-events: none; }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 800px) {
+      body { overflow: auto; }
+      .container { grid-template-columns: 1fr; height: auto; overflow: visible; }
+      .left-panel { overflow: visible; }
+      .right-panel { height: 55vh; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="logo">💖 Love Theme Studio</div>
+  <p>Personalize e compartilhe sua declaração de amor</p>
+</header>
+
+<div class="container">
+
+  <!-- ── LEFT PANEL ── -->
+  <div class="left-panel">
+
+    <!-- Theme cards -->
+    <div class="panel-section">
+      <div class="section-title">Escolha um Tema</div>
+      <div class="theme-cards">
+
+        <div class="theme-card active" data-theme="1" onclick="selectTheme(1)">
+          <div class="card-thumb thumb-1">TE AMO TE AMO TE AMO</div>
+          <div class="card-info">
+            <h3>Chuva de Amor</h3>
+            <p>Texto cascateando estilo Matrix</p>
+          </div>
+        </div>
+
+        <div class="theme-card" data-theme="2" onclick="selectTheme(2)">
+          <div class="card-thumb thumb-2">💕<br>I Love You<br>💕</div>
+          <div class="card-info">
+            <h3>Bolhas de Amor</h3>
+            <p>Mensagens flutuando na tela</p>
+          </div>
+        </div>
+
+        <div class="theme-card" data-theme="3" onclick="selectTheme(3)">
+          <div class="card-thumb thumb-3">✨<br>Estrelas<br>⭐</div>
+          <div class="card-info">
+            <h3>Estrelas do Amor</h3>
+            <p>Frases caindo como estrelas</p>
+          </div>
+        </div>
+
+        <div class="theme-card" data-theme="4" onclick="selectTheme(4)">
+          <div class="card-thumb thumb-4">🌌 ✦ 🌠<br>Galáxia</div>
+          <div class="card-info">
+            <h3>Galáxia do Amor</h3>
+            <p>Estrelas e nebulosas animadas</p>
+          </div>
+        </div>
+
+        <div class="theme-card" data-theme="5" onclick="selectTheme(5)">
+          <div class="card-thumb thumb-5">🌹<br>Pétalas<br>🌹</div>
+          <div class="card-info">
+            <h3>Pétalas de Rosa</h3>
+            <p>Pétalas caindo romanticamente</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+    <!-- Customization -->
+    <div class="panel-section">
+      <div class="section-title">Personalizar</div>
+
+      <!-- ── TEMA 1 ── -->
+      <div id="fields-1" class="theme-fields">
+        <div class="field-group">
+          <label class="field-label">Nome da pessoa amada</label>
+          <input type="text" id="t1-name" value="ZAMHIRA" placeholder="Ex: JULIA"
+            oninput="debouncedPreview()">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Mensagem central</label>
+          <input type="text" id="t1-msg" value="TE AMO ZAMHIRA❤️" placeholder="Mensagem no centro"
+            oninput="debouncedPreview()">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Cor da chuva</label>
+          <div class="color-row">
+            <input type="color" id="t1-color" value="#ff69b4"
+              oninput="syncColor('t1-color','t1-hex'); debouncedPreview()">
+            <span class="color-hex" id="t1-hex">#ff69b4</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="range-header">
+            <label class="field-label">Tamanho da fonte</label>
+            <span class="range-value" id="t1-fontsize-val">16px</span>
+          </div>
+          <input type="range" id="t1-fontsize" min="10" max="28" step="2" value="16"
+            oninput="document.getElementById('t1-fontsize-val').textContent=this.value+'px'; debouncedPreview()">
+          <div class="range-labels"><span>Pequeno</span><span>Grande</span></div>
+        </div>
+        <div class="field-group">
+          <div class="range-header">
+            <label class="field-label">Velocidade</label>
+            <span class="range-value" id="t1-speed-val">Normal</span>
+          </div>
+          <input type="range" id="t1-speed" min="1" max="5" step="1" value="3"
+            oninput="updateSpeedLabel(); debouncedPreview()">
+          <div class="range-labels"><span>Lento</span><span>Rápido</span></div>
+        </div>
+      </div>
+
+      <!-- ── TEMA 2 ── -->
+      <div id="fields-2" class="theme-fields hidden">
+        <div class="field-group">
+          <label class="field-label">Mensagem principal</label>
+          <input type="text" id="t2-main" value="I Love You ❤️" placeholder="Ex: Te Amo Muito"
+            oninput="debouncedPreview()">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Cor de fundo sólida</label>
+          <div class="toggle-row">
+            <label class="toggle">
+              <input type="checkbox" id="t2-bg-toggle"
+                onchange="toggleBgColor(); debouncedPreview()">
+              <div class="toggle-slider"></div>
+            </label>
+            <span class="toggle-label">Substituir imagem por cor</span>
+          </div>
+          <div id="t2-bg-color-row" class="color-row" style="display:none; margin-top:0.35rem;">
+            <input type="color" id="t2-bgcolor" value="#ff99b6"
+              oninput="syncColor('t2-bgcolor','t2-bghex'); debouncedPreview()">
+            <span class="color-hex" id="t2-bghex">#ff99b6</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">
+            Frases das bolhas
+            <span class="field-count" id="t2-count">10 frases</span>
+          </label>
+          <textarea id="t2-msgs"
+            oninput="updateCount('t2-msgs','t2-count'); debouncedPreview()">Te amo muchísimo ❤️
+Gracias por estar en mi vida 🌟
+Eres mi persona favorita 💕
+Juntos por siempre 🥰
+Tú y yo, para siempre 💖
+Tu sonrisa me ilumina 💫
+Eres lo mejor que me ha pasado 😍
+Cada momento contigo es mágico ✨
+Siempre pienso en ti 💭
+Mi corazón es tuyo 💘</textarea>
+        </div>
+        <span class="hint">💡 Uma frase por linha. As bolhas aparecem aleatoriamente.</span>
+      </div>
+
+      <!-- ── TEMA 3 ── -->
+      <div id="fields-3" class="theme-fields hidden">
+        <div class="field-group">
+          <label class="field-label">Mensagem central (clicável)</label>
+          <input type="text" id="t3-center" value="Você é minha estrela ⭐"
+            placeholder="Ex: Você é tudo pra mim" oninput="debouncedPreview()">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Cor das estrelas</label>
+          <div class="color-row">
+            <input type="color" id="t3-color" value="#ffffff"
+              oninput="syncColor('t3-color','t3-hex'); debouncedPreview()">
+            <span class="color-hex" id="t3-hex">#ffffff</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">
+            Frases que caem
+            <span class="field-count" id="t3-count">6 frases</span>
+          </label>
+          <textarea id="t3-phrases"
+            oninput="updateCount('t3-phrases','t3-count'); debouncedPreview()">Você é minha luz ✨
+Meu universo é você 🌌
+Te amo além das estrelas 💫
+Meu amor eterno ❤️
+Meu céu tem nome 💖
+Brilhamos juntos 💑</textarea>
+        </div>
+        <span class="hint">💡 Clique na mensagem central para trocar a frase.</span>
+      </div>
+
+      <!-- ── TEMA 4 ── -->
+      <div id="fields-4" class="theme-fields hidden">
+        <div class="field-group">
+          <label class="field-label">Mensagem central</label>
+          <input type="text" id="t4-msg" value="Você é minha galáxia 🌌"
+            placeholder="Ex: Meu universo 🌌" oninput="debouncedPreview()">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Cor das estrelas</label>
+          <div class="color-row">
+            <input type="color" id="t4-starcolor" value="#c8b4ff"
+              oninput="syncColor('t4-starcolor','t4-starhex'); debouncedPreview()">
+            <span class="color-hex" id="t4-starhex">#c8b4ff</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Cor da nebulosa</label>
+          <div class="color-row">
+            <input type="color" id="t4-nebulacolor" value="#6400aa"
+              oninput="syncColor('t4-nebulacolor','t4-nebulahex'); debouncedPreview()">
+            <span class="color-hex" id="t4-nebulahex">#6400aa</span>
+          </div>
+        </div>
+        <span class="hint">💡 Estrelas cadentes aparecem automaticamente.</span>
+      </div>
+
+      <!-- ── TEMA 5 ── -->
+      <div id="fields-5" class="theme-fields hidden">
+        <div class="field-group">
+          <label class="field-label">Mensagem central</label>
+          <input type="text" id="t5-msg" value="Para sempre com você 🌹"
+            placeholder="Ex: Meu amor eterno 🌹" oninput="debouncedPreview()">
+        </div>
+        <div class="field-group">
+          <label class="field-label">Cor das pétalas</label>
+          <div class="color-row">
+            <input type="color" id="t5-petalcolor" value="#e91e8c"
+              oninput="syncColor('t5-petalcolor','t5-petalhex'); debouncedPreview()">
+            <span class="color-hex" id="t5-petalhex">#e91e8c</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <label class="field-label">Cor de fundo</label>
+          <div class="color-row">
+            <input type="color" id="t5-bgcolor" value="#1a0010"
+              oninput="syncColor('t5-bgcolor','t5-bghex'); debouncedPreview()">
+            <span class="color-hex" id="t5-bghex">#1a0010</span>
+          </div>
+        </div>
+        <div class="field-group">
+          <div class="range-header">
+            <label class="field-label">Quantidade de pétalas</label>
+            <span class="range-value" id="t5-count-val">60</span>
+          </div>
+          <input type="range" id="t5-count" min="20" max="120" step="10" value="60"
+            oninput="document.getElementById('t5-count-val').textContent=this.value; debouncedPreview()">
+          <div class="range-labels"><span>Poucas</span><span>Muitas</span></div>
+        </div>
+        <span class="hint">💡 Pétalas caem e balançam suavemente.</span>
+      </div>
+
+      <!-- Actions -->
+      <div class="actions-grid">
+        <button class="btn-preview" onclick="updatePreview()">👁 Atualizar Preview</button>
+        <button class="btn-download" onclick="downloadTheme()">⬇ Baixar HTML</button>
+        <button class="btn-share" onclick="shareTheme()">📤 Compartilhar</button>
+        <button class="btn-reset" onclick="resetFields()">↺ Restaurar padrão</button>
+      </div>
+    </div>
+
+  </div><!-- /left-panel -->
+
+  <!-- ── RIGHT PANEL ── -->
+  <div class="right-panel">
+    <div class="preview-bar">
+      <div class="preview-bar-left">
+        <div class="dot"></div>
+        <span>Preview ao vivo</span>
+      </div>
+      <div class="preview-bar-right">
+        <div class="device-btns">
+          <button class="device-btn active" id="btn-desktop"
+            onclick="setDevice('desktop')" title="Desktop">🖥 Desktop</button>
+          <button class="device-btn" id="btn-mobile"
+            onclick="setDevice('mobile')" title="Mobile">📱 Mobile</button>
+        </div>
+        <button class="btn-newtab" onclick="openInNewTab()">↗ Nova aba</button>
+      </div>
+    </div>
+    <div class="preview-wrapper">
+      <div id="loading-overlay" class="loading-overlay hidden">
+        <div class="spinner"></div>
+      </div>
+      <iframe id="preview-frame" class="desktop" src="tema1.html" allow="autoplay"
+        onload="document.getElementById('loading-overlay').classList.add('hidden')">
+      </iframe>
+    </div>
+  </div>
+
+</div><!-- /container -->
+
+<div id="toast" class="toast hidden"></div>
+
+<footer>
+  Desenvolvedor: <a href="https://github.com/hugobastoss" target="_blank" rel="noopener">Hugo Bastos — github.com/hugobastoss</a>
+  &nbsp;|&nbsp;
+  Projeto no GitHub: <a href="https://github.com/hugobastoss/site-love-share-html" target="_blank" rel="noopener">site-love-share-html</a>
+</footer>
+
+<script>
+  /* ── STATE ── */
+  let currentTheme = 1;
+  const cache = {};
+
+  /* ── DEFAULTS (para reset) ── */
+  const DEFAULTS = {
+    1: { 't1-name':'ZAMHIRA', 't1-msg':'TE AMO ZAMHIRA❤️', 't1-color':'#ff69b4', 't1-fontsize':'16', 't1-speed':'3' },
+    2: {
+      't2-main':'I Love You ❤️', 't2-bgcolor':'#ff99b6',
+      't2-msgs':'Te amo muchísimo ❤️\nGracias por estar en mi vida 🌟\nEres mi persona favorita 💕\nJuntos por siempre 🥰\nTú y yo, para siempre 💖\nTu sonrisa me ilumina 💫\nEres lo mejor que me ha pasado 😍\nCada momento contigo es mágico ✨\nSiempre pienso en ti 💭\nMi corazón es tuyo 💘'
+    },
+    3: {
+      't3-center':'Você é minha estrela ⭐', 't3-color':'#ffffff',
+      't3-phrases':'Você é minha luz ✨\nMeu universo é você 🌌\nTe amo além das estrelas 💫\nMeu amor eterno ❤️\nMeu céu tem nome 💖\nBrilhamos juntos 💑'
+    },
+    4: { 't4-msg':'Você é minha galáxia 🌌', 't4-starcolor':'#c8b4ff', 't4-nebulacolor':'#6400aa' },
+    5: { 't5-msg':'Para sempre com você 🌹', 't5-petalcolor':'#e91e8c', 't5-bgcolor':'#1a0010', 't5-count':'60' }
+  };
+
+  /* ── INIT ── */
+  window.addEventListener('DOMContentLoaded', () => {
+    loadAllFromStorage();
+    syncColor('t1-color', 't1-hex');
+    syncColor('t2-bgcolor', 't2-bghex');
+    syncColor('t3-color', 't3-hex');
+    syncColor('t4-starcolor', 't4-starhex');
+    syncColor('t4-nebulacolor', 't4-nebulahex');
+    syncColor('t5-petalcolor', 't5-petalhex');
+    syncColor('t5-bgcolor', 't5-bghex');
+    document.getElementById('t5-count-val').textContent = document.getElementById('t5-count').value;
+    updateSpeedLabel();
+    updateCount('t2-msgs', 't2-count');
+    updateCount('t3-phrases', 't3-count');
+  });
+
+  /* ── SELECT THEME ── */
+  function selectTheme(n) {
+    currentTheme = n;
+    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
+    document.querySelector(`[data-theme="${n}"]`).classList.add('active');
+    document.querySelectorAll('.theme-fields').forEach(f => f.classList.add('hidden'));
+    document.getElementById(`fields-${n}`).classList.remove('hidden');
+    showLoading();
+    const frame = document.getElementById('preview-frame');
+    frame.removeAttribute('srcdoc');
+    frame.src = `tema${n}.html`;
+  }
+
+  /* ── FETCH ── */
+  async function fetchTheme(n) {
+    if (cache[n]) return cache[n];
+    const res = await fetch(`tema${n}.html`);
+    if (!res.ok) throw new Error('Use Live Server no VS Code para o preview funcionar');
+    cache[n] = await res.text();
+    return cache[n];
+  }
+
+  /* ── APPLY CUSTOMIZATIONS ── */
+  function applyCustomizations(html, n) {
+    if (n === 1) {
+      const name     = (document.getElementById('t1-name').value.trim() || 'AMOR').toUpperCase();
+      const msg      = document.getElementById('t1-msg').value || `TE AMO ${name}❤️`;
+      const color    = document.getElementById('t1-color').value;
+      const fontSize = document.getElementById('t1-fontsize').value;
+      const speedMap = { 1:190, 2:130, 3:80, 4:40, 5:15 };
+      const speedMs  = speedMap[document.getElementById('t1-speed').value] || 80;
+
+      html = html.replace(/const text = "TE AMO ZAMHIRA"/g, `const text = "TE AMO ${name}"`);
+      html = html.replace(/TE AMO ZAMHIRA❤️/g, msg);
+      html = html.replace(/#ff69b4/g, color);
+      html = html.replace(/const fontSize = 16/g, `const fontSize = ${fontSize}`);
+      html = html.replace(/setInterval\(draw, 50\)/g, `setInterval(draw, ${speedMs})`);
+
+    } else if (n === 2) {
+      const main       = document.getElementById('t2-main').value || 'I Love You ❤️';
+      const useBgColor = document.getElementById('t2-bg-toggle').checked;
+      const bgColor    = document.getElementById('t2-bgcolor').value;
+      const lines      = document.getElementById('t2-msgs').value
+        .split('\n').filter(l => l.trim())
+        .map(l => `  "${l.trim().replace(/"/g, '\\"')}"`)
+        .join(',\n');
+
+      html = html.replace(/I Love You ❤️/g, main);
+      html = html.replace(/const messages = \[[\s\S]*?\];/, `const messages = [\n${lines}\n];`);
+      if (useBgColor) {
+        html = html.replace(
+          /background: url\([^)]+\)[^;]*;/g,
+          `background: ${bgColor};`
+        );
+      }
+
+    } else if (n === 3) {
+      const center = document.getElementById('t3-center').value || 'Você é minha estrela ⭐';
+      const color  = document.getElementById('t3-color').value;
+      const lines  = document.getElementById('t3-phrases').value
+        .split('\n').filter(l => l.trim())
+        .map(l => `      "${l.trim().replace(/"/g, '\\"')}"`)
+        .join(',\n');
+      const r = parseInt(color.slice(1,3), 16);
+      const g = parseInt(color.slice(3,5), 16);
+      const b = parseInt(color.slice(5,7), 16);
+
+      html = html.replace(/Você é minha estrela ⭐/g, center);
+      html = html.replace(/const lovePhrases = \[[\s\S]*?\];/, `const lovePhrases = [\n${lines}\n    ];`);
+      html = html.replace(
+        /ctx\.fillStyle = `rgba\(255, 255, 255, \$\{this\.alpha\}\)`/g,
+        `ctx.fillStyle = \`rgba(${r}, ${g}, ${b}, \${this.alpha})\``
+      );
+    } else if (n === 4) {
+      const msg         = document.getElementById('t4-msg').value || 'Você é minha galáxia 🌌';
+      const starColor   = document.getElementById('t4-starcolor').value;
+      const nebulaColor = document.getElementById('t4-nebulacolor').value;
+
+      html = html.replace(/Você é minha galáxia 🌌/g, msg);
+      html = html.replace(/const starColor   = '#c8b4ff'/g, `const starColor   = '${starColor}'`);
+      html = html.replace(/const nebulaColor = '#6400aa'/g, `const nebulaColor = '${nebulaColor}'`);
+
+    } else if (n === 5) {
+      const msg        = document.getElementById('t5-msg').value || 'Para sempre com você 🌹';
+      const petalColor = document.getElementById('t5-petalcolor').value;
+      const bgColor    = document.getElementById('t5-bgcolor').value;
+      const count      = document.getElementById('t5-count').value;
+
+      html = html.replace(/Para sempre com você 🌹/g, msg);
+      html = html.replace(/const petalColor = '#e91e8c'/g, `const petalColor = '${petalColor}'`);
+      html = html.replace(/const bgColor    = '#1a0010'/g, `const bgColor    = '${bgColor}'`);
+      html = html.replace(/const petalCount = 60/g,        `const petalCount = ${count}`);
+    }
+
+    return html;
+  }
+
+  /* ── UPDATE PREVIEW ── */
+  async function updatePreview() {
+    try {
+      showLoading();
+      const html     = await fetchTheme(currentTheme);
+      const modified = applyCustomizations(html, currentTheme);
+      const base     = window.location.href.replace(/\/[^/]*$/, '/');
+      const withBase = modified.replace(/<head>/i, `<head>\n  <base href="${base}">`);
+      document.getElementById('preview-frame').srcdoc = withBase;
+      saveAllToStorage();
+    } catch (e) {
+      hideLoading();
+      showToast('⚠️ ' + e.message);
+    }
+  }
+
+  /* Debounce: auto-preview 900ms após última edição */
+  let debounceTimer;
+  function debouncedPreview() {
+    clearTimeout(debounceTimer);
+    debounceTimer = setTimeout(updatePreview, 900);
+  }
+
+  /* ── DOWNLOAD ── */
+  async function downloadTheme() {
+    if (!validateFields()) return;
+    try {
+      const html     = await fetchTheme(currentTheme);
+      const modified = applyCustomizations(html, currentTheme);
+      const blob     = new Blob([modified], { type: 'text/html;charset=utf-8' });
+      const url      = URL.createObjectURL(blob);
+      const a        = document.createElement('a');
+      a.href = url;
+      a.download = `amor-tema-${currentTheme}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('Download iniciado ⬇️');
+    } catch (e) {
+      showToast('⚠️ ' + e.message);
+    }
+  }
+
+  /* ── SHARE ── */
+  async function shareTheme() {
+    if (!validateFields()) return;
+    try {
+      const html     = await fetchTheme(currentTheme);
+      const modified = applyCustomizations(html, currentTheme);
+
+      if (navigator.share && navigator.canShare) {
+        const blob = new Blob([modified], { type: 'text/html' });
+        const file = new File([blob], 'declaracao-de-amor.html', { type: 'text/html' });
+        if (navigator.canShare({ files: [file] })) {
+          await navigator.share({ title: 'Uma declaração especial 💖', files: [file] });
+          return;
+        }
+      }
+      await navigator.clipboard.writeText(modified);
+      showToast('HTML copiado para a área de transferência 📋');
+    } catch (e) {
+      if (e.name !== 'AbortError') showToast('⚠️ ' + e.message);
+    }
+  }
+
+  /* ── OPEN IN NEW TAB ── */
+  function openInNewTab() {
+    const frame = document.getElementById('preview-frame');
+    const src   = frame.srcdoc
+      ? URL.createObjectURL(new Blob([frame.srcdoc], { type: 'text/html' }))
+      : frame.src;
+    window.open(src, '_blank');
+  }
+
+  /* ── DEVICE TOGGLE ── */
+  function setDevice(mode) {
+    const frame = document.getElementById('preview-frame');
+    frame.className = mode;
+    document.getElementById('btn-desktop').classList.toggle('active', mode === 'desktop');
+    document.getElementById('btn-mobile').classList.toggle('active', mode === 'mobile');
+  }
+
+  /* ── LOADING ── */
+  function showLoading() { document.getElementById('loading-overlay').classList.remove('hidden'); }
+  function hideLoading() { document.getElementById('loading-overlay').classList.add('hidden'); }
+
+  /* ── RESET ── */
+  function resetFields() {
+    const d = DEFAULTS[currentTheme];
+    for (const [id, val] of Object.entries(d)) {
+      const el = document.getElementById(id);
+      if (el) el.value = val;
+    }
+    if (currentTheme === 1) {
+      syncColor('t1-color', 't1-hex');
+      document.getElementById('t1-fontsize-val').textContent = '16px';
+      updateSpeedLabel();
+    }
+    if (currentTheme === 2) {
+      document.getElementById('t2-bg-toggle').checked = false;
+      toggleBgColor();
+      syncColor('t2-bgcolor', 't2-bghex');
+      updateCount('t2-msgs', 't2-count');
+    }
+    if (currentTheme === 3) {
+      syncColor('t3-color', 't3-hex');
+      updateCount('t3-phrases', 't3-count');
+    }
+    if (currentTheme === 4) {
+      syncColor('t4-starcolor', 't4-starhex');
+      syncColor('t4-nebulacolor', 't4-nebulahex');
+    }
+    if (currentTheme === 5) {
+      syncColor('t5-petalcolor', 't5-petalhex');
+      syncColor('t5-bgcolor', 't5-bghex');
+      document.getElementById('t5-count-val').textContent = document.getElementById('t5-count').value;
+    }
+    localStorage.removeItem(`loveTheme_${currentTheme}`);
+    showLoading();
+    const frame = document.getElementById('preview-frame');
+    frame.removeAttribute('srcdoc');
+    frame.src = `tema${currentTheme}.html`;
+    showToast('Restaurado ao padrão ↺');
+  }
+
+  /* ── LOCALSTORAGE ── */
+  const STORAGE_IDS = {
+    1: ['t1-name','t1-msg','t1-color','t1-fontsize','t1-speed'],
+    2: ['t2-main','t2-bgcolor','t2-msgs'],
+    3: ['t3-center','t3-color','t3-phrases'],
+    4: ['t4-msg','t4-starcolor','t4-nebulacolor'],
+    5: ['t5-msg','t5-petalcolor','t5-bgcolor','t5-count']
+  };
+
+  function saveAllToStorage() {
+    const data = {};
+    (STORAGE_IDS[currentTheme] || []).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) data[id] = el.value;
+    });
+    if (currentTheme === 2)
+      data['t2-bg-toggle'] = document.getElementById('t2-bg-toggle').checked;
+    localStorage.setItem(`loveTheme_${currentTheme}`, JSON.stringify(data));
+  }
+
+  function loadAllFromStorage() {
+    [1, 2, 3].forEach(n => {
+      const raw = localStorage.getItem(`loveTheme_${n}`);
+      if (!raw) return;
+      try {
+        const data = JSON.parse(raw);
+        for (const [id, val] of Object.entries(data)) {
+          const el = document.getElementById(id);
+          if (!el) continue;
+          if (id === 't2-bg-toggle') el.checked = val;
+          else el.value = val;
+        }
+        if (n === 2) toggleBgColor();
+      } catch (_) {}
+    });
+  }
+
+  /* ── VALIDATION ── */
+  function validateFields() {
+    if (currentTheme === 1 && !document.getElementById('t1-name').value.trim()) {
+      showToast('Preencha o nome da pessoa amada 💝'); return false;
+    }
+    if (currentTheme === 2 && !document.getElementById('t2-msgs').value.trim()) {
+      showToast('Adicione pelo menos uma frase 💝'); return false;
+    }
+    if (currentTheme === 3 && !document.getElementById('t3-phrases').value.trim()) {
+      showToast('Adicione pelo menos uma frase 💝'); return false;
+    }
+    return true;
+  }
+
+  /* ── HELPERS ── */
+  function syncColor(inputId, labelId) {
+    document.getElementById(labelId).textContent = document.getElementById(inputId).value;
+  }
+
+  function toggleBgColor() {
+    const on = document.getElementById('t2-bg-toggle').checked;
+    document.getElementById('t2-bg-color-row').style.display = on ? 'flex' : 'none';
+  }
+
+  const SPEED_LABELS = { 1:'Muito lento', 2:'Lento', 3:'Normal', 4:'Rápido', 5:'Muito rápido' };
+  function updateSpeedLabel() {
+    const v = document.getElementById('t1-speed').value;
+    document.getElementById('t1-speed-val').textContent = SPEED_LABELS[v] || 'Normal';
+  }
+
+  function updateCount(textareaId, labelId) {
+    const n = document.getElementById(textareaId).value
+      .split('\n').filter(l => l.trim()).length;
+    document.getElementById(labelId).textContent = `${n} frase${n !== 1 ? 's' : ''}`;
+  }
+
+  let toastTimer;
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.remove('hidden');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => t.classList.add('hidden'), 3000);
+  }
+</script>
+
+</body>
+</html>
