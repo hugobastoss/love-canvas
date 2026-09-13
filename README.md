@@ -2,9 +2,11 @@
 
 Uma página web para criar, personalizar e compartilhar declarações de amor animadas.
 
+🔗 **Acesse:** https://hugobastoss.github.io/love-canvas/
+
 ## O que é
 
-O **Love Theme Studio** é um estúdio visual onde você escolhe um tema animado, personaliza com o nome e as mensagens que quiser, e baixa ou compartilha o arquivo HTML pronto — sem precisar de servidor, login ou instalação.
+O **Love Canvas** é um estúdio visual onde você escolhe um tema animado, personaliza com o nome e as mensagens que quiser, e baixa ou compartilha o arquivo HTML pronto — sem precisar de servidor, login ou instalação.
 
 ## Temas disponíveis
 
