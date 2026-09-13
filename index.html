@@ -483,12 +483,12 @@
       <div id="fields-1" class="theme-fields">
         <div class="field-group">
           <label class="field-label" for="t1-name">Nome da pessoa amada</label>
-          <input type="text" id="t1-name" value="ZAMHIRA" placeholder="Ex: JULIA"
+          <input type="text" id="t1-name" value="[nome]" placeholder="Ex: JULIA"
             oninput="debouncedPreview()">
         </div>
         <div class="field-group">
           <label class="field-label" for="t1-msg">Mensagem central</label>
-          <input type="text" id="t1-msg" value="TE AMO ZAMHIRA❤️" placeholder="Mensagem no centro"
+          <input type="text" id="t1-msg" value="TE AMO [NOME]❤️" placeholder="Mensagem no centro"
             oninput="debouncedPreview()">
         </div>
         <div class="field-group">
@@ -731,7 +731,7 @@ Brilhamos juntos 💑</textarea>
 
   /* ── DEFAULTS (para reset) ── */
   const DEFAULTS = {
-    1: { 't1-name':'ZAMHIRA', 't1-msg':'TE AMO ZAMHIRA❤️', 't1-color':'#ff69b4', 't1-fontsize':'16', 't1-speed':'3' },
+    1: { 't1-name':'[nome]', 't1-msg':'TE AMO [NOME]❤️', 't1-color':'#ff69b4', 't1-fontsize':'16', 't1-speed':'3' },
     2: {
       't2-main':'I Love You ❤️', 't2-bgcolor':'#ff99b6',
       't2-msgs':'Te amo muchísimo ❤️\nGracias por estar en mi vida 🌟\nEres mi persona favorita 💕\nJuntos por siempre 🥰\nTú y yo, para siempre 💖\nTu sonrisa me ilumina 💫\nEres lo mejor que me ha pasado 😍\nCada momento contigo es mágico ✨\nSiempre pienso en ti 💭\nMi corazón es tuyo 💘'
@@ -827,8 +827,8 @@ Brilhamos juntos 💑</textarea>
       const speedMap = { 1:190, 2:130, 3:80, 4:40, 5:15 };
       const speedMs  = speedMap[document.getElementById('t1-speed').value] || 80;
 
-      html = html.replace(/const text = "TE AMO ZAMHIRA"/g, `const text = "TE AMO ${name}"`);
-      html = html.replace(/TE AMO ZAMHIRA❤️/g, msg);
+      html = html.replace(/const text = "TE AMO \[NOME\]"/g, `const text = "TE AMO ${name}"`);
+      html = html.replace(/TE AMO \[NOME\]❤️/g, msg);
       html = html.replace(/const rainColor = '#ff69b4'/g, `const rainColor = '${color}'`);
       html = html.replace(/const fontSize = 16/g, `const fontSize = ${fontSize}`);
       html = html.replace(/setInterval\(draw, 50\)/g, `setInterval(draw, ${speedMs})`);

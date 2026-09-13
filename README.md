@@ -1,4 +1,4 @@
-# 💖 Love Theme Studio
+# 💖 Love Canvas
 
 Uma página web para criar, personalizar e compartilhar declarações de amor animadas.
 
@@ -32,7 +32,3 @@ O **Love Theme Studio** é um estúdio visual onde você escolhe um tema animado
 3. Escolha um tema, personalize e clique em **Baixar HTML**
 
 > O botão "Atualizar Preview" e o download requerem um servidor local por conta do `fetch()`. Abrir o arquivo diretamente no navegador mostra o preview original normalmente.
-
-## Desenvolvedor
-
-**Hugo Bastos** — [github.com/hugobastoss](https://github.com/hugobastoss)
