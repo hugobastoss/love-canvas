@@ -10,13 +10,15 @@
     .overlay {
       position: absolute; top: 0; left: 0;
       width: 100vw; height: 100vh;
+      height: 100dvh;
       display: flex; align-items: center; justify-content: center;
       z-index: 2; pointer-events: none;
+      padding-inline: 1rem;
     }
     .message {
       font-family: Georgia, 'Times New Roman', serif;
       color: #ffe0ec;
-      font-size: 2.6rem;
+      font-size: clamp(1.75rem, 6vw, 2.6rem);
       text-align: center;
       text-shadow: 0 2px 20px rgba(180,0,60,0.9), 0 0 50px rgba(255,80,130,0.5);
       letter-spacing: 0.04em;
@@ -33,8 +35,20 @@
   <script>
     const canvas = document.getElementById('canvas');
     const ctx    = canvas.getContext('2d');
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    let cssW, cssH;
+    // Ajusta o buffer do canvas ao devicePixelRatio para não ficar borrado em telas retina
+    function resizeCanvasBuffer() {
+      const dpr = window.devicePixelRatio || 1;
+      cssW = window.innerWidth;
+      cssH = window.innerHeight;
+      canvas.width  = cssW * dpr;
+      canvas.height = cssH * dpr;
+      canvas.style.width  = cssW + 'px';
+      canvas.style.height = cssH + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resizeCanvasBuffer();
 
     const petalColor = '#e91e8c';
     const bgColor    = '#1a0010';
@@ -49,13 +63,13 @@
     /* ── BACKGROUND ── */
     function drawBg() {
       const grd = ctx.createRadialGradient(
-        canvas.width / 2, canvas.height / 2, 0,
-        canvas.width / 2, canvas.height / 2, canvas.width * 0.85
+        cssW / 2, cssH / 2, 0,
+        cssW / 2, cssH / 2, cssW * 0.85
       );
       grd.addColorStop(0, `rgba(${Math.min(pr+55,255)},${Math.min(pg+25,255)},${Math.min(pb+55,255)},0.18)`);
       grd.addColorStop(1, `rgb(${br},${bg},${bb})`);
       ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, cssW, cssH);
     }
 
     /* ── PETAL ── */
@@ -63,8 +77,8 @@
       constructor(initial = false) { this.reset(initial); }
 
       reset(initial = false) {
-        this.x    = Math.random() * canvas.width;
-        this.y    = initial ? Math.random() * canvas.height : -25;
+        this.x    = Math.random() * cssW;
+        this.y    = initial ? Math.random() * cssH : -25;
         this.w    = Math.random() * 13 + 7;
         this.h    = this.w * (Math.random() * 0.45 + 0.55);
         this.vy   = Math.random() * 1.4 + 0.55;
@@ -80,7 +94,7 @@
         this.x += this.vx + Math.sin(this.swayT) * 0.75;
         this.y += this.vy;
         this.rot += this.rotV;
-        if (this.y > canvas.height + 30) this.reset();
+        if (this.y > cssH + 30) this.reset();
       }
 
       draw() {
@@ -112,7 +126,7 @@
 
     /* ── ANIMATE ── */
     function animate() {
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.clearRect(0, 0, cssW, cssH);
       drawBg();
       petals.forEach(p => { p.update(); p.draw(); });
       requestAnimationFrame(animate);
@@ -120,10 +134,7 @@
 
     animate();
 
-    window.addEventListener('resize', () => {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
+    window.addEventListener('resize', resizeCanvasBuffer);
   </script>
 </body>
 </html>

@@ -13,10 +13,17 @@
       --surface2: #231d40;
       --accent: #e91e8c;
       --accent2: #9c27b0;
+      /* Backgrounds that carry white text: darker than --accent so white passes 4.5:1 */
+      --accent-solid: #be185d;
+      /* --accent used AS TEXT on dark surfaces: lighter so it clears 4.5:1 itself */
+      --accent-text: #f472b6;
       --accent-soft: rgba(233, 30, 140, 0.12);
       --text: #f0e6ff;
-      --muted: #8b7aa8;
+      /* Lightened from #8b7aa8 so it clears 4.5:1 on --surface2 too */
+      --muted: #a897c4;
       --border: rgba(233, 30, 140, 0.2);
+      /* Solid, brighter border for real form controls (needs ~3:1 vs its background) */
+      --border-input: #75639a;
       --radius: 12px;
     }
 
@@ -26,9 +33,22 @@
       color: var(--text);
       font-family: 'Segoe UI', system-ui, sans-serif;
       height: 100vh;
+      height: 100dvh;
       display: flex;
       flex-direction: column;
       overflow: hidden;
+    }
+
+    svg { display: block; flex-shrink: 0; }
+
+    /* Visible keyboard focus on every interactive element */
+    a:focus-visible,
+    button:focus-visible,
+    input:focus-visible,
+    textarea:focus-visible,
+    .toggle input:focus-visible + .toggle-slider {
+      outline: 2px solid var(--accent-text);
+      outline-offset: 2px;
     }
 
     /* ── HEADER ── */
@@ -40,21 +60,25 @@
       flex-shrink: 0;
     }
     .logo {
-      font-size: 1.5rem;
+      font-size: 1.75rem;
       font-weight: 700;
+      margin: 0;
       background: linear-gradient(135deg, #ff69b4, #e91e8c, #9c27b0);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    header p { color: var(--muted); font-size: 0.78rem; margin-top: 0.15rem; }
+    header p { color: var(--muted); font-size: 0.875rem; margin-top: 0.15rem; }
+
+    /* ── MOBILE TABS (Editar / Ver) ── */
+    .mobile-tabs { display: none; }
 
     /* ── FOOTER ── */
     footer {
       text-align: center;
       padding: 0.45rem 1rem;
       border-top: 1px solid var(--border);
-      font-size: 0.7rem;
+      font-size: 0.75rem;
       color: var(--muted);
       flex-shrink: 0;
     }
@@ -63,16 +87,17 @@
       text-decoration: none;
       transition: color 0.2s;
     }
-    footer a:hover { color: var(--accent); }
+    footer a:hover { color: var(--accent-text); }
 
     /* ── LAYOUT ── */
-    .container {
+    main.container {
       display: grid;
       grid-template-columns: 345px 1fr;
       gap: 1rem;
       padding: 1rem;
       flex: 1;
       overflow: hidden;
+      min-height: 0;
     }
 
     /* ── LEFT PANEL ── */
@@ -94,7 +119,7 @@
       padding: 1rem;
     }
     .section-title {
-      font-size: 0.67rem;
+      font-size: 0.75rem;
       text-transform: uppercase;
       letter-spacing: 0.12em;
       color: var(--muted);
@@ -103,18 +128,27 @@
     }
 
     /* ── THEME CARDS ── */
-    .theme-cards { display: flex; flex-direction: column; gap: 0.5rem; }
+    .theme-cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 0.6rem;
+    }
     .theme-card {
       display: flex;
-      align-items: center;
-      gap: 0.85rem;
-      padding: 0.6rem 0.75rem;
+      flex-direction: column;
+      align-items: stretch;
+      gap: 0.5rem;
+      width: 100%;
+      padding: 0.65rem;
       border-radius: 8px;
       border: 1px solid transparent;
       cursor: pointer;
       transition: all 0.2s;
       background: var(--surface2);
-      user-select: none;
+      color: inherit;
+      font: inherit;
+      text-align: left;
+      -webkit-user-select: none; user-select: none;
     }
     .theme-card:hover { border-color: rgba(233,30,140,0.4); }
     .theme-card.active {
@@ -123,10 +157,10 @@
       box-shadow: 0 0 0 1px var(--accent);
     }
     .card-thumb {
-      width: 54px; height: 40px;
+      width: 100%; height: 60px;
       border-radius: 5px;
       display: flex; align-items: center; justify-content: center;
-      font-size: 8px; text-align: center;
+      font-size: 9px; text-align: center;
       font-family: monospace; font-weight: bold;
       overflow: hidden; flex-shrink: 0;
       line-height: 1.4; word-break: break-all;
@@ -134,29 +168,29 @@
     .thumb-1 { background: #000; color: #ff69b4; }
     .thumb-2 { background: linear-gradient(135deg, #ffb6c1, #ff69b4); color: #8b0045; }
     .thumb-3 { background: #000; color: #ffd700; }
-    .thumb-4 { background: #00000a; color: #c8b4ff; font-size: 13px; letter-spacing: -0.5px; }
+    .thumb-4 { background: #00000a; color: #c8b4ff; font-size: 14px; letter-spacing: -0.5px; }
     .thumb-5 { background: linear-gradient(135deg, #1a0010, #3d0020); color: #ffe0ec; }
-    .card-info h3 { font-size: 0.82rem; font-weight: 600; }
-    .card-info p { font-size: 0.7rem; color: var(--muted); margin-top: 0.1rem; }
+    .card-info h3 { font-size: 1rem; font-weight: 600; }
+    .card-info p { font-size: 0.875rem; color: var(--muted); margin-top: 0.1rem; }
 
     /* ── FIELDS ── */
     .theme-fields { display: flex; flex-direction: column; gap: 0.65rem; }
     .theme-fields.hidden { display: none; }
     .field-group { display: flex; flex-direction: column; gap: 0.22rem; }
     .field-label {
-      font-size: 0.72rem; color: var(--muted); font-weight: 500;
+      font-size: 0.875rem; color: var(--muted); font-weight: 500;
       display: flex; justify-content: space-between; align-items: center;
     }
-    .field-count { font-size: 0.68rem; color: var(--accent); }
+    .field-count { font-size: 0.875rem; color: var(--accent-text); }
 
     input[type="text"], textarea {
       width: 100%;
       background: var(--surface2);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-input);
       color: var(--text);
       border-radius: 7px;
-      padding: 0.46rem 0.65rem;
-      font-size: 0.82rem;
+      padding: 0.5rem 0.65rem;
+      font-size: 1rem;
       font-family: inherit;
       outline: none;
       transition: border-color 0.2s;
@@ -169,22 +203,25 @@
     .color-row { display: flex; align-items: center; gap: 0.55rem; }
     input[type="color"] {
       width: 36px; height: 32px;
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-input);
       background: var(--surface2);
       border-radius: 7px; padding: 2px;
       cursor: pointer; flex-shrink: 0;
     }
-    .color-hex { font-size: 0.76rem; color: var(--muted); font-family: monospace; }
+    .color-hex { font-size: 0.875rem; color: var(--muted); font-family: monospace; }
 
     /* Toggle */
-    .toggle-row { display: flex; align-items: center; gap: 0.5rem; }
-    .toggle { position: relative; width: 34px; height: 19px; flex-shrink: 0; }
-    .toggle input { opacity: 0; width: 0; height: 0; }
+    .toggle-row {
+      display: flex; align-items: center; gap: 0.5rem;
+      min-height: 44px; cursor: pointer;
+    }
+    .toggle { position: relative; display: inline-block; width: 34px; height: 19px; flex-shrink: 0; }
+    .toggle input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
     .toggle-slider {
-      position: absolute; inset: 0;
+      position: absolute; inset: 0; display: block;
       background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 20px; cursor: pointer; transition: 0.2s;
+      border: 1px solid var(--border-input);
+      border-radius: 20px; transition: 0.2s;
     }
     .toggle-slider::before {
       content: ''; position: absolute;
@@ -193,52 +230,53 @@
     }
     .toggle input:checked + .toggle-slider { background: var(--accent-soft); border-color: var(--accent); }
     .toggle input:checked + .toggle-slider::before { transform: translateX(15px); background: var(--accent); }
-    .toggle-label { font-size: 0.74rem; color: var(--muted); }
+    .toggle-label { font-size: 0.875rem; color: var(--muted); }
 
     /* Range */
     .range-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 0.3rem; }
-    .range-value { font-size: 0.7rem; color: var(--accent); font-family: monospace; }
+    .range-value { font-size: 0.875rem; color: var(--accent-text); font-family: monospace; }
     input[type="range"] { width: 100%; accent-color: var(--accent); height: 4px; cursor: pointer; }
-    .range-labels { display: flex; justify-content: space-between; font-size: 0.64rem; color: var(--muted); margin-top: 0.2rem; }
+    .range-labels { display: flex; justify-content: space-between; font-size: 0.75rem; color: var(--muted); margin-top: 0.2rem; }
 
-    .hint { font-size: 0.67rem; color: var(--muted); font-style: italic; }
+    .hint { font-size: 0.75rem; color: var(--muted); font-style: italic; }
 
-    /* ── ACTIONS ── */
-    .actions-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
+    /* ── ACTIONS (sticky at the bottom of the left panel) ── */
+    .actions-bar {
+      position: sticky;
+      bottom: 0;
+      display: flex;
+      flex-direction: column;
       gap: 0.5rem;
-      margin-top: 0.9rem;
+      padding: 0.75rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 -10px 20px -12px rgba(0,0,0,0.6);
+      flex-shrink: 0;
     }
     button {
+      min-height: 44px;
       padding: 0.5rem 0.7rem;
       border: none; border-radius: 8px;
-      font-size: 0.77rem; font-weight: 600;
+      font-size: 0.875rem; font-weight: 600;
       cursor: pointer; transition: all 0.2s;
       font-family: inherit;
-      display: flex; align-items: center; justify-content: center; gap: 0.3rem;
+      display: flex; align-items: center; justify-content: center; gap: 0.4rem;
     }
-    .btn-preview {
-      grid-column: 1 / -1;
-      background: var(--surface2); color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-preview:hover { border-color: var(--accent); color: var(--accent); }
     .btn-download {
-      background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white;
+      background: linear-gradient(135deg, var(--accent-solid), var(--accent2)); color: white;
     }
     .btn-download:hover { opacity: 0.88; transform: translateY(-1px); }
     .btn-share {
       background: var(--surface2); color: var(--text);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-input);
     }
     .btn-share:hover { border-color: var(--accent2); color: #ce93d8; }
     .btn-reset {
-      grid-column: 1 / -1;
       background: transparent; color: var(--muted);
-      border: 1px solid transparent; font-size: 0.7rem; padding: 0.3rem;
+      border: 1px solid transparent; font-size: 0.75rem; min-height: 36px; padding: 0.3rem;
     }
-    .btn-reset:hover { color: var(--text); border-color: var(--border); }
+    .btn-reset:hover { color: var(--text); border-color: var(--border-input); }
 
     /* ── RIGHT PANEL ── */
     .right-panel {
@@ -246,9 +284,11 @@
       border: 1px solid var(--border);
       border-radius: var(--radius);
       overflow: hidden; background: #000;
+      min-height: 0;
     }
     .preview-bar {
-      display: flex; align-items: center; justify-content: space-between;
+      display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap;
+      gap: 0.5rem;
       padding: 0.52rem 0.9rem;
       background: var(--surface);
       border-bottom: 1px solid var(--border);
@@ -261,29 +301,31 @@
       animation: blink 2s ease-in-out infinite;
     }
     @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
-    .preview-bar span { font-size: 0.68rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
-    .preview-bar-right { display: flex; align-items: center; gap: 0.4rem; }
+    .preview-bar span { font-size: 0.75rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.1em; }
+    .preview-bar-right { display: flex; align-items: center; gap: 0.5rem; }
 
     /* Device toggle */
     .device-btns {
       display: flex; gap: 2px;
       background: var(--surface2);
-      border: 1px solid var(--border);
+      border: 1px solid var(--border-input);
       border-radius: 6px; padding: 2px;
     }
     .device-btn {
-      padding: 0.25rem 0.5rem; font-size: 0.68rem;
+      min-height: 34px;
+      padding: 0.3rem 0.6rem; font-size: 0.75rem;
       background: transparent; color: var(--muted);
       border: none; border-radius: 4px; cursor: pointer;
       transition: all 0.15s; font-family: inherit;
     }
-    .device-btn.active { background: var(--accent); color: white; }
+    .device-btn.active { background: var(--accent-solid); color: white; }
     .device-btn:not(.active):hover { color: var(--text); }
 
     .btn-newtab {
-      padding: 0.28rem 0.6rem; font-size: 0.68rem;
+      min-height: 34px;
+      padding: 0.3rem 0.7rem; font-size: 0.75rem;
       background: var(--surface2); color: var(--muted);
-      border: 1px solid var(--border); border-radius: 6px;
+      border: 1px solid var(--border-input); border-radius: 6px;
     }
     .btn-newtab:hover { color: var(--text); border-color: var(--accent); }
 
@@ -311,10 +353,13 @@
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    #preview-frame { border: none; transition: all 0.3s; }
+    #preview-frame { border: none; transition: width 0.3s, height 0.3s; }
     #preview-frame.desktop { width: 100%; height: 100%; }
     #preview-frame.mobile {
-      width: 390px; height: 844px; max-height: 100%;
+      width: min(390px, 100%);
+      aspect-ratio: 390 / 844;
+      height: auto;
+      max-height: 100%;
       border-radius: 14px;
       box-shadow: 0 0 0 8px #222, 0 0 0 9px #444;
     }
@@ -324,102 +369,130 @@
       position: fixed; bottom: 1.4rem; left: 50%;
       transform: translateX(-50%) translateY(0);
       background: var(--surface); color: var(--text);
-      padding: 0.52rem 1.3rem;
-      border-radius: 50px; border: 1px solid var(--accent);
-      font-size: 0.82rem;
+      padding: 0.55rem 1.3rem;
+      border-radius: 16px; border: 1px solid var(--accent);
+      font-size: 1rem;
+      max-width: calc(100vw - 2rem);
+      text-align: center;
       box-shadow: 0 4px 24px rgba(0,0,0,0.5);
       z-index: 1000; transition: opacity 0.3s, transform 0.3s;
-      white-space: nowrap;
     }
     .toast.hidden { opacity: 0; transform: translateX(-50%) translateY(10px); pointer-events: none; }
+
+    @media (prefers-reduced-motion: reduce) {
+      .dot { animation: none; }
+      .btn-download:hover { transform: none; }
+      .spinner { animation-duration: 1.2s; }
+    }
 
     /* ── RESPONSIVE ── */
     @media (max-width: 800px) {
       body { overflow: auto; }
-      .container { grid-template-columns: 1fr; height: auto; overflow: visible; }
-      .left-panel { overflow: visible; }
-      .right-panel { height: 55vh; }
+      .mobile-tabs {
+        display: flex; gap: 0.5rem;
+        padding: 0.6rem 1rem 0;
+        flex-shrink: 0;
+      }
+      .mobile-tab {
+        flex: 1; min-height: 44px;
+        background: var(--surface2); color: var(--muted);
+        border: 1px solid var(--border-input); border-radius: 8px;
+        font-size: 0.875rem; font-weight: 600;
+      }
+      .mobile-tab.active { background: var(--accent-soft); color: var(--text); border-color: var(--accent); }
+
+      main.container { grid-template-columns: 1fr; height: auto; overflow: visible; }
+      .left-panel { overflow: visible; display: none; }
+      .right-panel { display: none; height: 75dvh; }
+      main.container.show-preview .right-panel { display: flex; }
+      main.container:not(.show-preview) .left-panel { display: flex; }
+      .device-btns { display: none; }
     }
   </style>
 </head>
 <body>
 
 <header>
-  <div class="logo">💖 Love Theme Studio</div>
+  <h1 class="logo">💖 Love Theme Studio</h1>
   <p>Personalize e compartilhe sua declaração de amor</p>
 </header>
 
-<div class="container">
+<div class="mobile-tabs" role="tablist" aria-label="Alternar entre editar e visualizar">
+  <button type="button" class="mobile-tab active" id="tab-edit" role="tab" aria-selected="true" aria-controls="left-panel" onclick="setMobileView('edit')">Editar</button>
+  <button type="button" class="mobile-tab" id="tab-preview" role="tab" aria-selected="false" aria-controls="right-panel" onclick="setMobileView('preview')">Ver preview</button>
+</div>
+
+<main class="container">
 
   <!-- ── LEFT PANEL ── -->
-  <div class="left-panel">
+  <div class="left-panel" id="left-panel" role="tabpanel" aria-labelledby="tab-edit">
 
     <!-- Theme cards -->
     <div class="panel-section">
-      <div class="section-title">Escolha um Tema</div>
+      <h2 class="section-title">Escolha um Tema</h2>
       <div class="theme-cards">
 
-        <div class="theme-card active" data-theme="1" onclick="selectTheme(1)">
-          <div class="card-thumb thumb-1">TE AMO TE AMO TE AMO</div>
-          <div class="card-info">
+        <button type="button" class="theme-card active" data-theme="1" aria-pressed="true" onclick="selectTheme(1)">
+          <span class="card-thumb thumb-1" aria-hidden="true">TE AMO TE AMO TE AMO</span>
+          <span class="card-info">
             <h3>Chuva de Amor</h3>
             <p>Texto cascateando estilo Matrix</p>
-          </div>
-        </div>
+          </span>
+        </button>
 
-        <div class="theme-card" data-theme="2" onclick="selectTheme(2)">
-          <div class="card-thumb thumb-2">💕<br>I Love You<br>💕</div>
-          <div class="card-info">
+        <button type="button" class="theme-card" data-theme="2" aria-pressed="false" onclick="selectTheme(2)">
+          <span class="card-thumb thumb-2" aria-hidden="true">💕<br>I Love You<br>💕</span>
+          <span class="card-info">
             <h3>Bolhas de Amor</h3>
             <p>Mensagens flutuando na tela</p>
-          </div>
-        </div>
+          </span>
+        </button>
 
-        <div class="theme-card" data-theme="3" onclick="selectTheme(3)">
-          <div class="card-thumb thumb-3">✨<br>Estrelas<br>⭐</div>
-          <div class="card-info">
+        <button type="button" class="theme-card" data-theme="3" aria-pressed="false" onclick="selectTheme(3)">
+          <span class="card-thumb thumb-3" aria-hidden="true">✨<br>Estrelas<br>⭐</span>
+          <span class="card-info">
             <h3>Estrelas do Amor</h3>
             <p>Frases caindo como estrelas</p>
-          </div>
-        </div>
+          </span>
+        </button>
 
-        <div class="theme-card" data-theme="4" onclick="selectTheme(4)">
-          <div class="card-thumb thumb-4">🌌 ✦ 🌠<br>Galáxia</div>
-          <div class="card-info">
+        <button type="button" class="theme-card" data-theme="4" aria-pressed="false" onclick="selectTheme(4)">
+          <span class="card-thumb thumb-4" aria-hidden="true">🌌 ✦ 🌠<br>Galáxia</span>
+          <span class="card-info">
             <h3>Galáxia do Amor</h3>
             <p>Estrelas e nebulosas animadas</p>
-          </div>
-        </div>
+          </span>
+        </button>
 
-        <div class="theme-card" data-theme="5" onclick="selectTheme(5)">
-          <div class="card-thumb thumb-5">🌹<br>Pétalas<br>🌹</div>
-          <div class="card-info">
+        <button type="button" class="theme-card" data-theme="5" aria-pressed="false" onclick="selectTheme(5)">
+          <span class="card-thumb thumb-5" aria-hidden="true">🌹<br>Pétalas<br>🌹</span>
+          <span class="card-info">
             <h3>Pétalas de Rosa</h3>
             <p>Pétalas caindo romanticamente</p>
-          </div>
-        </div>
+          </span>
+        </button>
 
       </div>
     </div>
 
     <!-- Customization -->
     <div class="panel-section">
-      <div class="section-title">Personalizar</div>
+      <h2 class="section-title">Personalizar</h2>
 
       <!-- ── TEMA 1 ── -->
       <div id="fields-1" class="theme-fields">
         <div class="field-group">
-          <label class="field-label">Nome da pessoa amada</label>
+          <label class="field-label" for="t1-name">Nome da pessoa amada</label>
           <input type="text" id="t1-name" value="ZAMHIRA" placeholder="Ex: JULIA"
             oninput="debouncedPreview()">
         </div>
         <div class="field-group">
-          <label class="field-label">Mensagem central</label>
+          <label class="field-label" for="t1-msg">Mensagem central</label>
           <input type="text" id="t1-msg" value="TE AMO ZAMHIRA❤️" placeholder="Mensagem no centro"
             oninput="debouncedPreview()">
         </div>
         <div class="field-group">
-          <label class="field-label">Cor da chuva</label>
+          <label class="field-label" for="t1-color">Cor da chuva</label>
           <div class="color-row">
             <input type="color" id="t1-color" value="#ff69b4"
               oninput="syncColor('t1-color','t1-hex'); debouncedPreview()">
@@ -428,7 +501,7 @@
         </div>
         <div class="field-group">
           <div class="range-header">
-            <label class="field-label">Tamanho da fonte</label>
+            <label class="field-label" for="t1-fontsize">Tamanho da fonte</label>
             <span class="range-value" id="t1-fontsize-val">16px</span>
           </div>
           <input type="range" id="t1-fontsize" min="10" max="28" step="2" value="16"
@@ -437,7 +510,7 @@
         </div>
         <div class="field-group">
           <div class="range-header">
-            <label class="field-label">Velocidade</label>
+            <label class="field-label" for="t1-speed">Velocidade</label>
             <span class="range-value" id="t1-speed-val">Normal</span>
           </div>
           <input type="range" id="t1-speed" min="1" max="5" step="1" value="3"
@@ -449,28 +522,31 @@
       <!-- ── TEMA 2 ── -->
       <div id="fields-2" class="theme-fields hidden">
         <div class="field-group">
-          <label class="field-label">Mensagem principal</label>
+          <label class="field-label" for="t2-main">Mensagem principal</label>
           <input type="text" id="t2-main" value="I Love You ❤️" placeholder="Ex: Te Amo Muito"
             oninput="debouncedPreview()">
         </div>
         <div class="field-group">
-          <label class="field-label">Cor de fundo sólida</label>
-          <div class="toggle-row">
-            <label class="toggle">
-              <input type="checkbox" id="t2-bg-toggle"
+          <span class="field-label" id="t2-bg-toggle-label">Cor de fundo sólida</span>
+          <label class="toggle-row" for="t2-bg-toggle">
+            <span class="toggle">
+              <input type="checkbox" id="t2-bg-toggle" aria-labelledby="t2-bg-toggle-label"
                 onchange="toggleBgColor(); debouncedPreview()">
-              <div class="toggle-slider"></div>
-            </label>
+              <span class="toggle-slider" aria-hidden="true"></span>
+            </span>
             <span class="toggle-label">Substituir imagem por cor</span>
-          </div>
-          <div id="t2-bg-color-row" class="color-row" style="display:none; margin-top:0.35rem;">
-            <input type="color" id="t2-bgcolor" value="#ff99b6"
-              oninput="syncColor('t2-bgcolor','t2-bghex'); debouncedPreview()">
-            <span class="color-hex" id="t2-bghex">#ff99b6</span>
+          </label>
+          <div id="t2-bg-color-row" style="display:none; margin-top:0.35rem;">
+            <label class="field-label" for="t2-bgcolor">Cor de fundo</label>
+            <div class="color-row" style="margin-top:0.22rem;">
+              <input type="color" id="t2-bgcolor" value="#ff99b6"
+                oninput="syncColor('t2-bgcolor','t2-bghex'); debouncedPreview()">
+              <span class="color-hex" id="t2-bghex">#ff99b6</span>
+            </div>
           </div>
         </div>
         <div class="field-group">
-          <label class="field-label">
+          <label class="field-label" for="t2-msgs">
             Frases das bolhas
             <span class="field-count" id="t2-count">10 frases</span>
           </label>
@@ -492,12 +568,12 @@ Mi corazón es tuyo 💘</textarea>
       <!-- ── TEMA 3 ── -->
       <div id="fields-3" class="theme-fields hidden">
         <div class="field-group">
-          <label class="field-label">Mensagem central (clicável)</label>
+          <label class="field-label" for="t3-center">Mensagem central (clicável)</label>
           <input type="text" id="t3-center" value="Você é minha estrela ⭐"
             placeholder="Ex: Você é tudo pra mim" oninput="debouncedPreview()">
         </div>
         <div class="field-group">
-          <label class="field-label">Cor das estrelas</label>
+          <label class="field-label" for="t3-color">Cor das estrelas</label>
           <div class="color-row">
             <input type="color" id="t3-color" value="#ffffff"
               oninput="syncColor('t3-color','t3-hex'); debouncedPreview()">
@@ -505,7 +581,7 @@ Mi corazón es tuyo 💘</textarea>
           </div>
         </div>
         <div class="field-group">
-          <label class="field-label">
+          <label class="field-label" for="t3-phrases">
             Frases que caem
             <span class="field-count" id="t3-count">6 frases</span>
           </label>
@@ -523,12 +599,12 @@ Brilhamos juntos 💑</textarea>
       <!-- ── TEMA 4 ── -->
       <div id="fields-4" class="theme-fields hidden">
         <div class="field-group">
-          <label class="field-label">Mensagem central</label>
+          <label class="field-label" for="t4-msg">Mensagem central</label>
           <input type="text" id="t4-msg" value="Você é minha galáxia 🌌"
             placeholder="Ex: Meu universo 🌌" oninput="debouncedPreview()">
         </div>
         <div class="field-group">
-          <label class="field-label">Cor das estrelas</label>
+          <label class="field-label" for="t4-starcolor">Cor das estrelas</label>
           <div class="color-row">
             <input type="color" id="t4-starcolor" value="#c8b4ff"
               oninput="syncColor('t4-starcolor','t4-starhex'); debouncedPreview()">
@@ -536,7 +612,7 @@ Brilhamos juntos 💑</textarea>
           </div>
         </div>
         <div class="field-group">
-          <label class="field-label">Cor da nebulosa</label>
+          <label class="field-label" for="t4-nebulacolor">Cor da nebulosa</label>
           <div class="color-row">
             <input type="color" id="t4-nebulacolor" value="#6400aa"
               oninput="syncColor('t4-nebulacolor','t4-nebulahex'); debouncedPreview()">
@@ -549,12 +625,12 @@ Brilhamos juntos 💑</textarea>
       <!-- ── TEMA 5 ── -->
       <div id="fields-5" class="theme-fields hidden">
         <div class="field-group">
-          <label class="field-label">Mensagem central</label>
+          <label class="field-label" for="t5-msg">Mensagem central</label>
           <input type="text" id="t5-msg" value="Para sempre com você 🌹"
             placeholder="Ex: Meu amor eterno 🌹" oninput="debouncedPreview()">
         </div>
         <div class="field-group">
-          <label class="field-label">Cor das pétalas</label>
+          <label class="field-label" for="t5-petalcolor">Cor das pétalas</label>
           <div class="color-row">
             <input type="color" id="t5-petalcolor" value="#e91e8c"
               oninput="syncColor('t5-petalcolor','t5-petalhex'); debouncedPreview()">
@@ -562,7 +638,7 @@ Brilhamos juntos 💑</textarea>
           </div>
         </div>
         <div class="field-group">
-          <label class="field-label">Cor de fundo</label>
+          <label class="field-label" for="t5-bgcolor">Cor de fundo</label>
           <div class="color-row">
             <input type="color" id="t5-bgcolor" value="#1a0010"
               oninput="syncColor('t5-bgcolor','t5-bghex'); debouncedPreview()">
@@ -571,57 +647,76 @@ Brilhamos juntos 💑</textarea>
         </div>
         <div class="field-group">
           <div class="range-header">
-            <label class="field-label">Quantidade de pétalas</label>
+            <label class="field-label" for="t5-count">Quantidade de pétalas</label>
             <span class="range-value" id="t5-count-val">60</span>
           </div>
           <input type="range" id="t5-count" min="20" max="120" step="10" value="60"
             oninput="document.getElementById('t5-count-val').textContent=this.value; debouncedPreview()">
           <div class="range-labels"><span>Poucas</span><span>Muitas</span></div>
         </div>
-        <span class="hint">💡 Pétalas caem e balançam suavemente.</span>
+        <span class="hint">💡 Pétalas caem e balançam suavemente. A cor do texto se ajusta sozinha para continuar legível sobre o fundo escolhido.</span>
       </div>
 
-      <!-- Actions -->
-      <div class="actions-grid">
-        <button class="btn-preview" onclick="updatePreview()">👁 Atualizar Preview</button>
-        <button class="btn-download" onclick="downloadTheme()">⬇ Baixar HTML</button>
-        <button class="btn-share" onclick="shareTheme()">📤 Compartilhar</button>
-        <button class="btn-reset" onclick="resetFields()">↺ Restaurar padrão</button>
-      </div>
+    </div>
+
+    <!-- Actions (sticky) -->
+    <div class="actions-bar">
+      <button type="button" class="btn-download" onclick="downloadTheme()">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg>
+        Baixar HTML
+      </button>
+      <button type="button" class="btn-share" onclick="shareTheme()">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 15V4"/><path d="M8 8l4-4 4 4"/><path d="M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/></svg>
+        Compartilhar
+      </button>
+      <button type="button" class="btn-reset" onclick="resetFields()">
+        <svg aria-hidden="true" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a8 8 0 1 1 2.6 5.9"/><path d="M4 17v-5h5"/></svg>
+        Restaurar padrão
+      </button>
     </div>
 
   </div><!-- /left-panel -->
 
   <!-- ── RIGHT PANEL ── -->
-  <div class="right-panel">
+  <div class="right-panel" id="right-panel" role="tabpanel" aria-labelledby="tab-preview">
     <div class="preview-bar">
       <div class="preview-bar-left">
-        <div class="dot"></div>
+        <div class="dot" aria-hidden="true"></div>
         <span>Preview ao vivo</span>
       </div>
       <div class="preview-bar-right">
         <div class="device-btns">
-          <button class="device-btn active" id="btn-desktop"
-            onclick="setDevice('desktop')" title="Desktop">🖥 Desktop</button>
-          <button class="device-btn" id="btn-mobile"
-            onclick="setDevice('mobile')" title="Mobile">📱 Mobile</button>
+          <button type="button" class="device-btn active" id="btn-desktop"
+            onclick="setDevice('desktop')" aria-pressed="true">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="12" rx="1.5"/><path d="M8 20h8"/><path d="M12 16v4"/></svg>
+            Desktop
+          </button>
+          <button type="button" class="device-btn" id="btn-mobile"
+            onclick="setDevice('mobile')" aria-pressed="false">
+            <svg aria-hidden="true" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 19h2"/></svg>
+            Mobile
+          </button>
         </div>
-        <button class="btn-newtab" onclick="openInNewTab()">↗ Nova aba</button>
+        <button type="button" class="btn-newtab" onclick="openInNewTab()">
+          <svg aria-hidden="true" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 5h5v5"/><path d="M19 5l-9 9"/><path d="M8 5H6a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2"/></svg>
+          Nova aba
+        </button>
       </div>
     </div>
     <div class="preview-wrapper">
       <div id="loading-overlay" class="loading-overlay hidden">
-        <div class="spinner"></div>
+        <div class="spinner" role="status" aria-label="Carregando preview"></div>
       </div>
       <iframe id="preview-frame" class="desktop" src="tema1.html" allow="autoplay"
+        title="Pré-visualização do tema selecionado"
         onload="document.getElementById('loading-overlay').classList.add('hidden')">
       </iframe>
     </div>
   </div>
 
-</div><!-- /container -->
+</main><!-- /container -->
 
-<div id="toast" class="toast hidden"></div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
 
 <footer>
   Desenvolvedor: <a href="https://github.com/hugobastoss" target="_blank" rel="noopener">Hugo Bastos — github.com/hugobastoss</a>
@@ -668,14 +763,29 @@ Brilhamos juntos 💑</textarea>
   /* ── SELECT THEME ── */
   function selectTheme(n) {
     currentTheme = n;
-    document.querySelectorAll('.theme-card').forEach(c => c.classList.remove('active'));
-    document.querySelector(`[data-theme="${n}"]`).classList.add('active');
+    document.querySelectorAll('.theme-card').forEach(c => {
+      c.classList.remove('active');
+      c.setAttribute('aria-pressed', 'false');
+    });
+    const card = document.querySelector(`[data-theme="${n}"]`);
+    card.classList.add('active');
+    card.setAttribute('aria-pressed', 'true');
     document.querySelectorAll('.theme-fields').forEach(f => f.classList.add('hidden'));
     document.getElementById(`fields-${n}`).classList.remove('hidden');
     showLoading();
     const frame = document.getElementById('preview-frame');
     frame.removeAttribute('srcdoc');
     frame.src = `tema${n}.html`;
+  }
+
+  /* ── MOBILE EDIT / PREVIEW TABS ── */
+  function setMobileView(mode) {
+    const isEdit = mode === 'edit';
+    document.getElementById('tab-edit').classList.toggle('active', isEdit);
+    document.getElementById('tab-edit').setAttribute('aria-selected', String(isEdit));
+    document.getElementById('tab-preview').classList.toggle('active', !isEdit);
+    document.getElementById('tab-preview').setAttribute('aria-selected', String(!isEdit));
+    document.querySelector('main.container').classList.toggle('show-preview', !isEdit);
   }
 
   /* ── FETCH ── */
@@ -685,6 +795,26 @@ Brilhamos juntos 💑</textarea>
     if (!res.ok) throw new Error('Use Live Server no VS Code para o preview funcionar');
     cache[n] = await res.text();
     return cache[n];
+  }
+
+  /* ── COR DE TEXTO LEGÍVEL (contraste automático) ── */
+  function relativeLuminance(hex) {
+    const c = hex.replace('#', '');
+    const [r, g, b] = [0, 2, 4]
+      .map(i => parseInt(c.slice(i, i + 2), 16) / 255)
+      .map(v => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
+  }
+  function contrastRatio(hexA, hexB) {
+    const la = relativeLuminance(hexA), lb = relativeLuminance(hexB);
+    const [hi, lo] = la > lb ? [la, lb] : [lb, la];
+    return (hi + 0.05) / (lo + 0.05);
+  }
+  /* Escolhe, entre um tom quase-preto e um quase-branco, o que tem mais contraste
+     contra a cor de fundo escolhida pela pessoa usuária. */
+  function readableTextColor(bgHex) {
+    const dark = '#1a0010', light = '#ffe6f2';
+    return contrastRatio(dark, bgHex) >= contrastRatio(light, bgHex) ? dark : light;
   }
 
   /* ── APPLY CUSTOMIZATIONS ── */
@@ -699,7 +829,7 @@ Brilhamos juntos 💑</textarea>
 
       html = html.replace(/const text = "TE AMO ZAMHIRA"/g, `const text = "TE AMO ${name}"`);
       html = html.replace(/TE AMO ZAMHIRA❤️/g, msg);
-      html = html.replace(/#ff69b4/g, color);
+      html = html.replace(/const rainColor = '#ff69b4'/g, `const rainColor = '${color}'`);
       html = html.replace(/const fontSize = 16/g, `const fontSize = ${fontSize}`);
       html = html.replace(/setInterval\(draw, 50\)/g, `setInterval(draw, ${speedMs})`);
 
@@ -716,7 +846,7 @@ Brilhamos juntos 💑</textarea>
       html = html.replace(/const messages = \[[\s\S]*?\];/, `const messages = [\n${lines}\n];`);
       if (useBgColor) {
         html = html.replace(
-          /background: url\([^)]+\)[^;]*;/g,
+          /background: radial-gradient\([^)]*\)[^;]*;/g,
           `background: ${bgColor};`
         );
       }
@@ -752,11 +882,13 @@ Brilhamos juntos 💑</textarea>
       const petalColor = document.getElementById('t5-petalcolor').value;
       const bgColor    = document.getElementById('t5-bgcolor').value;
       const count      = document.getElementById('t5-count').value;
+      const textColor  = readableTextColor(bgColor);
 
       html = html.replace(/Para sempre com você 🌹/g, msg);
       html = html.replace(/const petalColor = '#e91e8c'/g, `const petalColor = '${petalColor}'`);
       html = html.replace(/const bgColor    = '#1a0010'/g, `const bgColor    = '${bgColor}'`);
       html = html.replace(/const petalCount = 60/g,        `const petalCount = ${count}`);
+      html = html.replace(/color: #ffe0ec;/g,              `color: ${textColor};`);
     }
 
     return html;
@@ -841,8 +973,11 @@ Brilhamos juntos 💑</textarea>
   function setDevice(mode) {
     const frame = document.getElementById('preview-frame');
     frame.className = mode;
-    document.getElementById('btn-desktop').classList.toggle('active', mode === 'desktop');
-    document.getElementById('btn-mobile').classList.toggle('active', mode === 'mobile');
+    const isDesktop = mode === 'desktop';
+    document.getElementById('btn-desktop').classList.toggle('active', isDesktop);
+    document.getElementById('btn-desktop').setAttribute('aria-pressed', String(isDesktop));
+    document.getElementById('btn-mobile').classList.toggle('active', !isDesktop);
+    document.getElementById('btn-mobile').setAttribute('aria-pressed', String(!isDesktop));
   }
 
   /* ── LOADING ── */
@@ -909,7 +1044,7 @@ Brilhamos juntos 💑</textarea>
   }
 
   function loadAllFromStorage() {
-    [1, 2, 3].forEach(n => {
+    [1, 2, 3, 4, 5].forEach(n => {
       const raw = localStorage.getItem(`loveTheme_${n}`);
       if (!raw) return;
       try {
@@ -946,7 +1081,7 @@ Brilhamos juntos 💑</textarea>
 
   function toggleBgColor() {
     const on = document.getElementById('t2-bg-toggle').checked;
-    document.getElementById('t2-bg-color-row').style.display = on ? 'flex' : 'none';
+    document.getElementById('t2-bg-color-row').style.display = on ? 'block' : 'none';
   }
 
   const SPEED_LABELS = { 1:'Muito lento', 2:'Lento', 3:'Normal', 4:'Rápido', 5:'Muito rápido' };

@@ -38,10 +38,12 @@
 
     .center-message {
       font-family: 'Courier New', monospace;
-      color: #ff69b4;
-      font-size: 3rem;
+      /* Cor fixa e sempre legível sobre o fundo preto, independente da cor da chuva escolhida */
+      color: #ffe6f5;
+      font-size: clamp(1.75rem, 6vw, 3rem);
       text-align: center;
-      opacity: 0.9; /* Cambiado de 0.1 a 0.5 para mayor visibilidad */
+      padding-inline: 1rem;
+      opacity: 0.9;
     }
   </style>
 </head>
@@ -57,29 +59,40 @@
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
 
-    // Configurar tamaño del canvas
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
-
     const text = "TE AMO ZAMHIRA";
     const fontSize = 16;
-    const columns = Math.floor(canvas.width / (fontSize * 4)); // Menos columnas porque "TE AMO" es más ancho
-    const drops = new Array(columns).fill(1);
+    const rainColor = '#ff69b4';
 
-    ctx.font = fontSize + "px monospace";
+    let cssW, cssH, drops;
+
+    // Ajusta o buffer do canvas ao devicePixelRatio para não ficar borrado em telas retina
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      cssW = window.innerWidth;
+      cssH = window.innerHeight;
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      canvas.style.width = cssW + 'px';
+      canvas.style.height = cssH + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      ctx.font = fontSize + "px monospace";
+      const columns = Math.floor(cssW / (fontSize * 4)); // Menos columnas porque "TE AMO" es más ancho
+      drops = new Array(columns).fill(1);
+    }
+    resizeCanvas();
 
     function draw() {
       // Fondo translúcido para efecto de desvanecimiento
       ctx.fillStyle = "rgba(0, 0, 0, 0.05)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, cssW, cssH);
 
-      ctx.fillStyle = "#ff69b4"; // Rosado amoroso
+      ctx.fillStyle = rainColor;
       for (let i = 0; i < drops.length; i++) {
         const x = i * fontSize * 4;
         const y = drops[i] * fontSize;
         ctx.fillText(text, x, y);
 
-        if (y > canvas.height && Math.random() > 0.975) {
+        if (y > cssH && Math.random() > 0.975) {
           drops[i] = 0;
         }
 
@@ -89,11 +102,8 @@
 
     setInterval(draw, 50);
 
-    // Redimensionar canvas si cambia el tamaño
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
+    // Redimensionar canvas se a tela mudar de tamanho (inclui rotação do celular)
+    window.addEventListener('resize', resizeCanvas);
   </script>
 
 

@@ -24,6 +24,7 @@
       left: 0;
       width: 100vw;
       height: 100vh;
+      height: 100dvh;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -34,13 +35,20 @@
     .message {
       font-family: 'Courier New', monospace;
       color: #ffd700;
-      font-size: 2rem;
+      font-size: clamp(1.4rem, 5vw, 2rem);
       text-align: center;
       opacity: 0.95;
       position: relative;
+      background: none;
+      border: none;
+      padding: 0.5rem 1rem;
       transition: transform 0.1s ease;
       pointer-events: auto;
       cursor: pointer;
+    }
+    .message:focus-visible {
+      outline: 2px solid #ffd700;
+      outline-offset: 4px;
     }
   </style>
 </head>
@@ -49,7 +57,7 @@
   <canvas id="canvas"></canvas>
 
   <div class="overlay">
-    <div class="message" id="love-message">Você é minha estrela ⭐</div>
+    <button type="button" class="message" id="love-message" aria-label="Toque para ver outra mensagem de amor">Você é minha estrela ⭐</button>
   </div>
 
   <audio id="click-sound" src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_145ae7e783.mp3?filename=button-click-124467.mp3"></audio>
@@ -57,8 +65,20 @@
   <script>
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    canvas.width = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    let cssW, cssH;
+    // Ajusta o buffer do canvas ao devicePixelRatio para não ficar borrado em telas retina
+    function resizeCanvas() {
+      const dpr = window.devicePixelRatio || 1;
+      cssW = window.innerWidth;
+      cssH = window.innerHeight;
+      canvas.width = cssW * dpr;
+      canvas.height = cssH * dpr;
+      canvas.style.width = cssW + 'px';
+      canvas.style.height = cssH + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resizeCanvas();
 
     const lovePhrases = [
       "Você é minha luz ✨",
@@ -83,8 +103,8 @@
       }
 
       reset() {
-        this.x = Math.random() * canvas.width;
-        this.y = Math.random() * -canvas.height;
+        this.x = Math.random() * cssW;
+        this.y = Math.random() * -cssH;
         this.speed = 2 + Math.random() * 4;
         this.text = randomPhrase();
         this.alpha = 1;
@@ -93,7 +113,7 @@
       update() {
         this.y += this.speed;
         this.alpha -= 0.002;
-        if (this.y > canvas.height || this.alpha <= 0) {
+        if (this.y > cssH || this.alpha <= 0) {
           this.reset();
         }
       }
@@ -109,7 +129,7 @@
 
     function animate() {
       ctx.fillStyle = "rgba(0, 0, 0, 0.1)";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, cssW, cssH);
 
       stars.forEach(star => {
         star.update();
@@ -121,10 +141,7 @@
 
     animate();
 
-    window.addEventListener('resize', () => {
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-    });
+    window.addEventListener('resize', resizeCanvas);
 
     // Central message interactions
     function changeCenterMessage() {

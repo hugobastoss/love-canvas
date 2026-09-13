@@ -10,13 +10,15 @@
     .overlay {
       position: absolute; top: 0; left: 0;
       width: 100vw; height: 100vh;
+      height: 100dvh;
       display: flex; align-items: center; justify-content: center;
       z-index: 2; pointer-events: none;
+      padding-inline: 1rem;
     }
     .message {
       font-family: 'Courier New', monospace;
       color: #e8d8ff;
-      font-size: 2.4rem;
+      font-size: clamp(1.5rem, 6vw, 2.4rem);
       text-align: center;
       line-height: 1.4;
       animation: glow 3s ease-in-out infinite;
@@ -24,6 +26,9 @@
     @keyframes glow {
       0%, 100% { text-shadow: 0 0 15px #9c27b0, 0 0 30px #9c27b0; }
       50%       { text-shadow: 0 0 25px #e91e8c, 0 0 55px #e91e8c, 0 0 80px #e91e8c; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      .message { animation: none; text-shadow: 0 0 20px #9c27b0, 0 0 40px #e91e8c; }
     }
   </style>
 </head>
@@ -36,8 +41,20 @@
   <script>
     const canvas = document.getElementById('canvas');
     const ctx    = canvas.getContext('2d');
-    canvas.width  = window.innerWidth;
-    canvas.height = window.innerHeight;
+
+    let cssW, cssH;
+    // Ajusta o buffer do canvas ao devicePixelRatio para não ficar borrado em telas retina
+    function resizeCanvasBuffer() {
+      const dpr = window.devicePixelRatio || 1;
+      cssW = window.innerWidth;
+      cssH = window.innerHeight;
+      canvas.width  = cssW * dpr;
+      canvas.height = cssH * dpr;
+      canvas.style.width  = cssW + 'px';
+      canvas.style.height = cssH + 'px';
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    }
+    resizeCanvasBuffer();
 
     const starColor   = '#c8b4ff';
     const nebulaColor = '#6400aa';
@@ -50,8 +67,8 @@
 
     /* ── STARS ── */
     const stars = Array.from({ length: 220 }, () => ({
-      x:     Math.random() * canvas.width,
-      y:     Math.random() * canvas.height,
+      x:     Math.random() * cssW,
+      y:     Math.random() * cssH,
       r:     Math.random() * 1.8 + 0.3,
       alpha: Math.random(),
       dir:   Math.random() > 0.5 ? 1 : -1,
@@ -62,8 +79,8 @@
     const shoots = [];
     function spawnShoot() {
       shoots.push({
-        x:     Math.random() * canvas.width,
-        y:     Math.random() * canvas.height * 0.55,
+        x:     Math.random() * cssW,
+        y:     Math.random() * cssH * 0.55,
         len:   Math.random() * 90 + 40,
         speed: Math.random() * 9 + 5,
         alpha: 1,
@@ -75,29 +92,29 @@
     /* ── NEBULA ── */
     function drawNebula() {
       const g1 = ctx.createRadialGradient(
-        canvas.width * 0.32, canvas.height * 0.38, 15,
-        canvas.width * 0.32, canvas.height * 0.38, canvas.width * 0.58
+        cssW * 0.32, cssH * 0.38, 15,
+        cssW * 0.32, cssH * 0.38, cssW * 0.58
       );
       g1.addColorStop(0, `rgba(${nr},${ng},${nb},0.22)`);
       g1.addColorStop(0.5, `rgba(0,30,${nb},0.09)`);
       g1.addColorStop(1, 'transparent');
       ctx.fillStyle = g1;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, cssW, cssH);
 
       const g2 = ctx.createRadialGradient(
-        canvas.width * 0.72, canvas.height * 0.62, 10,
-        canvas.width * 0.72, canvas.height * 0.62, canvas.width * 0.42
+        cssW * 0.72, cssH * 0.62, 10,
+        cssW * 0.72, cssH * 0.62, cssW * 0.42
       );
       g2.addColorStop(0, `rgba(${sr},${Math.floor(sg*0.2)},${sb},0.12)`);
       g2.addColorStop(1, 'transparent');
       ctx.fillStyle = g2;
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, cssW, cssH);
     }
 
     /* ── ANIMATE ── */
     function animate() {
       ctx.fillStyle = 'rgba(0,0,10,0.13)';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, cssW, cssH);
 
       /* twinkling stars */
       stars.forEach(s => {
@@ -137,15 +154,14 @@
 
     /* init */
     ctx.fillStyle = '#00000a';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.fillRect(0, 0, cssW, cssH);
     drawNebula();
     animate();
 
     window.addEventListener('resize', () => {
-      canvas.width  = window.innerWidth;
-      canvas.height = window.innerHeight;
+      resizeCanvasBuffer();
       ctx.fillStyle = '#00000a';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillRect(0, 0, cssW, cssH);
       drawNebula();
     });
   </script>

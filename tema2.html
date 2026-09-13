@@ -11,10 +11,10 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
+    height: 100dvh;
     margin: 0;
-    background: url('https://img.freepik.com/vector-gratis/tema-san-valentin-corazones-cielo-rosa_1308-38030.jpg?semt=ais_hybrid&w=740') no-repeat center center;
-    background-size: cover;
-    background-attachment: fixed;
+    /* Gradiente próprio (sem depender de imagem externa que pode sair do ar ou mudar de licença) */
+    background: radial-gradient(ellipse at top, #ffe3ee 0%, #ffc2d9 45%, #ff8fbd 100%);
     font-family: 'Arial', sans-serif;
     text-align: center;
     overflow: hidden;
@@ -33,7 +33,7 @@
     border-radius: 15px;
     box-shadow: 0px 8px 15px rgba(0, 0, 0, 0.2);
     font-size: 28px;
-    color: #d63384;
+    color: #9d174d;
     font-weight: bold;
     margin-bottom: 25px;
     transition: transform 0.3s ease;
@@ -78,8 +78,8 @@
 .charming-text {
     position: absolute;
     font-size: 18px;
-    font-family: 'Cursive', sans-serif;
-    color: #d63384;
+    font-family: cursive, 'Segoe UI', sans-serif;
+    color: #9d174d;
     animation: fadeInText 6s ease-in-out infinite;
     z-index: 1;
     padding: 10px 20px;
@@ -154,8 +154,8 @@
 .text-bubble {
     position: absolute;
     font-size: 18px;
-    font-family: 'Cursive', sans-serif;
-    color: #d63384;
+    font-family: cursive, 'Segoe UI', sans-serif;
+    color: #9d174d;
     background-color: rgba(255, 255, 255, 0.7);
     padding: 10px 20px;
     border-radius: 25px;
@@ -189,6 +189,11 @@
     }
 }
 
+@media (prefers-reduced-motion: reduce) {
+    .message, .hearts, .flowers, .bubbles, .text-bubble {
+        animation: none !important;
+    }
+}
 
         </style>
     </head>
